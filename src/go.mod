@@ -4,8 +4,6 @@ go 1.16
 
 replace nachiket.me/url-shortener/api => ./api
 
-replace nachiket.me/url-shortener/mongodb => ./src/repository/mongodb
-
 replace nachiket.me/url-shortener => ./shortener
 
 require (
