@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "5bd0f793-e607-4b3b-bc0f-fe435a9004e0",
+		"name": "URL Shortener",
+		"description": "Welcome to my URL Shortener in Go.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Find URL",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/0jswoEuMg",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"0jswoEuMg"
+					]
+				},
+				"description": "Find the url from the shortened code"
+			},
+			"response": []
+		},
+		{
+			"name": "Store URL",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"https://www.nachiket.me/\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8000",
+					"host": [
+						"localhost"
+					],
+					"port": "8000"
+				},
+				"description": "Store the url and return a shortened url which will be redirected to the original url."
+			},
+			"response": []
+		}
+	]
+}
