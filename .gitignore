@@ -20,3 +20,6 @@ bin/*
 
 # IDE Files
 .idea/*
+
+# Personal Files
+redis_server/*
