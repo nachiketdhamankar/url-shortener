@@ -5,7 +5,7 @@ import (
 	"log"
 	"nachiket.me/url-shortener/serializer/json"
 	"nachiket.me/url-shortener/serializer/msgpack"
-	shortener3 "nachiket.me/url-shortener/shortener"
+	"nachiket.me/url-shortener/shortener"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -18,10 +18,10 @@ type RedirectHandler interface {
 }
 
 type handler struct {
-	redirectService shortener3.RedirectService
+	redirectService shortener.RedirectService
 }
 
-func NewHandler(redirectService shortener3.RedirectService) RedirectHandler {
+func NewHandler(redirectService shortener.RedirectService) RedirectHandler {
 	return &handler{redirectService: redirectService}
 }
 
@@ -34,7 +34,7 @@ func setupResponse(w http.ResponseWriter, contentType string, body []byte, statu
 	}
 }
 
-func (h *handler) serializer(contentType string) shortener3.RedirectSerializer {
+func (h *handler) serializer(contentType string) shortener.RedirectSerializer {
 	if contentType == "application/x-msgpack" {
 		return &msgpack.Redirect{}
 	}
@@ -45,7 +45,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 	redirect, err := h.redirectService.Find(code)
 	if err != nil {
-		if errors.Cause(err) == shortener3.ErrorRedirectNotFound {
+		if errors.Cause(err) == shortener.ErrorRedirectNotFound {
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		}
@@ -69,7 +69,7 @@ func (h *handler) Post(w http.ResponseWriter, r *http.Request) {
 	}
 	err = h.redirectService.Store(redirect)
 	if err != nil {
-		if errors.Cause(err) == shortener3.ErrorRedirectInvalid {
+		if errors.Cause(err) == shortener.ErrorRedirectInvalid {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}

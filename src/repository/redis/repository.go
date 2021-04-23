@@ -2,7 +2,7 @@ package redis
 
 import (
 	"fmt"
-	shortener2 "nachiket.me/url-shortener/shortener"
+	"nachiket.me/url-shortener/shortener"
 	"strconv"
 
 	"github.com/go-redis/redis"
@@ -26,7 +26,7 @@ func newRedisClient(redisURL string) (*redis.Client, error) {
 	return client, nil
 }
 
-func NewRedisRepository(redisURL string) (shortener2.RedirectRepository, error) {
+func NewRedisRepository(redisURL string) (shortener.RedirectRepository, error) {
 	repo := &redisRepository{}
 	client, err := newRedisClient(redisURL)
 	if err != nil {
@@ -40,15 +40,15 @@ func (r *redisRepository) generateKey(code string) string {
 	return fmt.Sprintf("redirect:%s", code)
 }
 
-func (r *redisRepository) Find(code string) (*shortener2.Redirect, error) {
-	redirect := &shortener2.Redirect{}
+func (r *redisRepository) Find(code string) (*shortener.Redirect, error) {
+	redirect := &shortener.Redirect{}
 	key := r.generateKey(code)
 	data, err := r.client.HGetAll(key).Result()
 	if err != nil {
 		return nil, errors.Wrap(err, "repository.Redirect.Find")
 	}
 	if len(data) == 0 {
-		return nil, errors.Wrap(shortener2.ErrorRedirectNotFound, "repository.Redirect.Find")
+		return nil, errors.Wrap(shortener.ErrorRedirectNotFound, "repository.Redirect.Find")
 	}
 	createdAt, err := strconv.ParseInt(data["created_at"], 10, 64)
 	if err != nil {
@@ -60,7 +60,7 @@ func (r *redisRepository) Find(code string) (*shortener2.Redirect, error) {
 	return redirect, nil
 }
 
-func (r *redisRepository) Store(redirect *shortener2.Redirect) error {
+func (r *redisRepository) Store(redirect *shortener.Redirect) error {
 	key := r.generateKey(redirect.Code)
 	data := map[string]interface{}{
 		"code":       redirect.Code,

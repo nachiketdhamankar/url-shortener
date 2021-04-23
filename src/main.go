@@ -8,7 +8,7 @@ import (
 	"nachiket.me/url-shortener/api"
 	"nachiket.me/url-shortener/repository/mongo"
 	"nachiket.me/url-shortener/repository/redis"
-	shortener2 "nachiket.me/url-shortener/shortener"
+	"nachiket.me/url-shortener/shortener"
 	"net/http"
 	"os"
 	"os/signal"
@@ -18,7 +18,7 @@ import (
 
 func main() {
 	repo := chooseRepo()
-	service := shortener2.NewRedirectService(repo)
+	service := shortener.NewRedirectService(repo)
 	handler := api.NewHandler(service)
 
 	r := chi.NewRouter()
@@ -55,7 +55,7 @@ func httpPort() string {
 	return fmt.Sprintf(":%s", port)
 }
 
-func chooseRepo() shortener2.RedirectRepository {
+func chooseRepo() shortener.RedirectRepository {
 	switch os.Getenv("URL_DB") {
 	case "redis":
 		redisURL := os.Getenv("REDIS_URL")

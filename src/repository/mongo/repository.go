@@ -2,7 +2,7 @@ package mongo
 
 import (
 	"context"
-	shortener2 "nachiket.me/url-shortener/shortener"
+	"nachiket.me/url-shortener/shortener"
 	"time"
 
 	"github.com/pkg/errors"
@@ -32,7 +32,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	return client, nil
 }
 
-func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (shortener2.RedirectRepository, error) {
+func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (shortener.RedirectRepository, error) {
 	repo := &mongoRepository{
 		timeout:  time.Duration(mongoTimeout) * time.Second,
 		database: mongoDB,
@@ -45,23 +45,23 @@ func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (shortener2.
 	return repo, nil
 }
 
-func (r *mongoRepository) Find(code string) (*shortener2.Redirect, error) {
+func (r *mongoRepository) Find(code string) (*shortener.Redirect, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
-	redirect := &shortener2.Redirect{}
+	redirect := &shortener.Redirect{}
 	collection := r.client.Database(r.database).Collection("redirects")
 	filter := bson.M{"code": code}
 	err := collection.FindOne(ctx, filter).Decode(&redirect)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, errors.Wrap(shortener2.ErrorRedirectNotFound, "repository.Redirect.Find")
+			return nil, errors.Wrap(shortener.ErrorRedirectNotFound, "repository.Redirect.Find")
 		}
 		return nil, errors.Wrap(err, "repository.Redirect.Find")
 	}
 	return redirect, nil
 }
 
-func (r *mongoRepository) Store(redirect *shortener2.Redirect) error {
+func (r *mongoRepository) Store(redirect *shortener.Redirect) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 	collection := r.client.Database(r.database).Collection("redirects")
