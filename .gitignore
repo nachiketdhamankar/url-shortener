@@ -23,3 +23,4 @@ bin/*
 
 # Personal Files
 redis_server/*
+*.rdb
